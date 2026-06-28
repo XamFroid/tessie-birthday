@@ -11,195 +11,517 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow-x:hidden}
 body{background:#09040a;color:#ede0e4;font-family:"Cormorant Garamond",Georgia,serif}
-#bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-/* SPLASH */
-#splash{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;background:radial-gradient(ellipse at 50% 60%,#2e0d1a,#09040a);transition:opacity .9s ease,transform .9s ease}
-#splash.out{opacity:0;transform:scale(1.04);pointer-events:none}
-.si{max-width:380px;animation:fu 1.8s ease both}
-@keyframes fu{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
-.glyph{font-size:1.3rem;letter-spacing:10px;color:#c9a84c;margin-bottom:.5rem;animation:gl 3s ease-in-out infinite alternate}
-@keyframes gl{from{text-shadow:0 0 8px #c9a84c}to{text-shadow:0 0 24px #c9a84c,0 0 50px rgba(201,168,76,.3)}}
-.kicker{font-family:Lato,sans-serif;font-size:.6rem;letter-spacing:6px;text-transform:uppercase;color:#e88fa0;margin-bottom:2rem}
-.sname{font-family:"Dancing Script",cursive;font-size:clamp(2.6rem,10vw,4rem);color:#fdf6ee;line-height:1.2}
-.sname em{color:#e5c97e;font-style:normal;display:block}
-.hb{display:inline-block;font-size:1.8rem;margin:.8rem 0 1.6rem;animation:hba 1.6s ease-in-out infinite;color:#e88fa0}
-@keyframes hba{0%,100%{transform:scale(1)}25%{transform:scale(1.38)}50%{transform:scale(1.1)}75%{transform:scale(1.32)}}
-.hint{font-style:italic;font-size:1rem;color:#c8a0b0;line-height:1.7;margin-bottom:2.2rem}
-.btn{position:relative;overflow:hidden;padding:.95rem 2.6rem;background:linear-gradient(135deg,#a33e54,#7c2d3e);color:#fdf6ee;border:none;cursor:pointer;border-radius:60px;font-family:Lato,sans-serif;font-size:.78rem;letter-spacing:4px;text-transform:uppercase;box-shadow:0 0 0 1.5px #c9a84c,0 8px 40px rgba(124,45,62,.55);transition:all .35s ease}
-.btn::before{content:'';position:absolute;inset:0;border-radius:60px;background:linear-gradient(135deg,#e5c97e,#c9a84c);opacity:0;transition:opacity .35s ease}
-.btn:hover::before,.btn:active::before{opacity:1}
-.btn:hover,.btn:active{color:#180a10;box-shadow:0 0 0 1.5px #e5c97e,0 14px 50px rgba(201,168,76,.45);transform:translateY(-3px) scale(1.04)}
-.btn span{position:relative;z-index:1}
+canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 
-/* VEIL */
-#veil{position:fixed;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#2e0d1a,#09040a);opacity:0;pointer-events:none;transition:opacity .55s ease}
-#veil.on{opacity:1;pointer-events:all}
-.vt{font-family:"Dancing Script",cursive;font-size:clamp(1.8rem,8vw,3.2rem);color:#e5c97e;text-align:center;line-height:1.5;text-shadow:0 0 30px rgba(229,201,126,.45);animation:pt 1.6s ease-in-out infinite}
-@keyframes pt{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.65;transform:scale(.97)}}
+/* ====== SPLASH ====== */
+#splash{
+  position:fixed;inset:0;z-index:20;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;padding:2rem;
+  background:radial-gradient(ellipse at 50% 55%,#2e0d1a 0%,#09040a 70%);
+  transition:opacity .8s ease,transform .8s ease;
+}
+#splash.hide{opacity:0;transform:scale(1.03);pointer-events:none}
 
-/* LETTER WRAP */
-#lw{position:relative;z-index:5;min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:flex-start;padding:4rem 1.2rem 5rem;opacity:0;transition:opacity 1.4s ease}
-#lw.on{opacity:1}
+.splash-box{max-width:360px;animation:fadeUp 1.6s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
 
-/* PAPER */
-.paper{width:100%;max-width:540px;background:linear-gradient(145deg,rgba(34,13,22,.97),rgba(22,8,14,.99));border:1px solid rgba(201,168,76,.22);border-radius:3px;padding:clamp(1.8rem,6vw,3rem) clamp(1.4rem,5vw,2.6rem);box-shadow:0 0 0 1px rgba(201,168,76,.07),inset 0 2px 0 rgba(201,168,76,.12),0 40px 100px rgba(0,0,0,.75);position:relative}
-.paper::before{content:'❤';position:absolute;top:-1rem;left:50%;transform:translateX(-50%);font-size:2rem;color:#a33e54;filter:drop-shadow(0 0 8px rgba(163,62,84,.7))}
-.ldate{font-family:Lato,sans-serif;font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:#c9a84c;opacity:.7;margin-bottom:1.6rem}
-.lto{font-family:"Dancing Script",cursive;font-size:clamp(1.7rem,7vw,2.4rem);color:#e5c97e;margin-bottom:1.4rem;line-height:1.2;min-height:2.8rem}
-.lbody{font-size:clamp(1.05rem,3.8vw,1.2rem);line-height:2;color:#ede0e4;white-space:pre-wrap;padding-left:.5rem;min-height:4rem}
-.cur{display:inline-block;width:2px;height:1em;background:#e88fa0;animation:bl .75s step-end infinite;vertical-align:text-bottom;margin-left:2px}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
-.lbot{margin-top:2rem;padding-top:1.2rem;border-top:1px solid rgba(201,168,76,.1);display:flex;flex-direction:column;align-items:flex-end;gap:.4rem}
-.lsig{font-family:"Dancing Script",cursive;font-size:clamp(1.4rem,5vw,1.9rem);color:#e88fa0;opacity:0;transition:opacity 1.4s ease .3s}
-.lsig.on{opacity:1}
-.lsl{font-family:Lato,sans-serif;font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:#c9a84c;opacity:0;transition:opacity 1.2s ease .8s}
-.lsl.on{opacity:.6}
-.foot{margin-top:2.5rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;opacity:0;transition:opacity 1.5s ease 1s;text-align:center}
-.foot.on{opacity:1}
-.fo{font-size:1rem;color:#c9a84c;letter-spacing:8px;opacity:.5}
-.ftext{font-style:italic;font-size:.9rem;color:#c8a0b0;line-height:1.6}
+.s-glyph{font-size:1.2rem;letter-spacing:10px;color:#c9a84c;margin-bottom:.6rem;animation:glow 3s ease-in-out infinite alternate}
+@keyframes glow{from{text-shadow:0 0 8px #c9a84c}to{text-shadow:0 0 22px #c9a84c,0 0 50px rgba(201,168,76,.3)}}
 
-/* MUSIC */
-#mb{position:fixed;bottom:1.4rem;right:1.4rem;z-index:99;width:46px;height:46px;border-radius:50%;background:rgba(22,8,14,.92);border:1px solid rgba(201,168,76,.3);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .3s ease;backdrop-filter:blur(12px)}
-#mb:hover{transform:scale(1.12);border-color:#c9a84c}
-#mb.on{animation:mp 1.5s ease-in-out infinite;border-color:#c9a84c}
-@keyframes mp{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.45)}50%{box-shadow:0 0 0 10px rgba(201,168,76,0)}}
+.s-tag{font-family:Lato,sans-serif;font-size:.6rem;letter-spacing:6px;text-transform:uppercase;color:#e88fa0;margin-bottom:1.8rem}
 
-/* FLOAT MSG */
-.fm{position:fixed;pointer-events:none;z-index:9999;font-family:"Dancing Script",cursive;font-size:1rem;color:#f2c4ce;text-shadow:0 0 8px rgba(232,143,160,.5);opacity:0;white-space:nowrap;transition:opacity .25s ease,transform .7s ease}
+.s-title{font-family:"Dancing Script",cursive;font-size:clamp(2.5rem,10vw,3.8rem);color:#fdf6ee;line-height:1.2;margin-bottom:.3rem}
+.s-title span{display:block;color:#e5c97e}
+
+.s-heart{display:inline-block;font-size:1.9rem;color:#e88fa0;margin:.8rem 0 1.5rem;animation:hb 1.5s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}25%{transform:scale(1.4)}50%{transform:scale(1.1)}75%{transform:scale(1.35)}}
+
+.s-sub{font-style:italic;font-size:1rem;color:#c8a0b0;line-height:1.7;margin-bottom:2rem}
+
+#btn-abrir{
+  position:relative;overflow:hidden;
+  display:inline-block;
+  padding:1rem 2.8rem;
+  background:linear-gradient(135deg,#a33e54,#7c2d3e);
+  color:#fdf6ee;border:none;cursor:pointer;
+  border-radius:60px;
+  font-family:Lato,sans-serif;font-size:.78rem;
+  letter-spacing:4px;text-transform:uppercase;
+  box-shadow:0 0 0 1.5px #c9a84c,0 8px 36px rgba(124,45,62,.55);
+  transition:transform .3s ease,box-shadow .3s ease,color .3s ease;
+}
+#btn-abrir::before{
+  content:'';position:absolute;inset:0;border-radius:60px;
+  background:linear-gradient(135deg,#e5c97e,#c9a84c);
+  opacity:0;transition:opacity .3s ease;
+}
+#btn-abrir:hover::before,#btn-abrir:active::before{opacity:1}
+#btn-abrir:hover,#btn-abrir:active{color:#180a10;transform:translateY(-3px) scale(1.04);box-shadow:0 0 0 1.5px #e5c97e,0 14px 46px rgba(201,168,76,.45)}
+#btn-abrir .btxt{position:relative;z-index:1}
+
+/* ====== VELO ====== */
+#velo{
+  position:fixed;inset:0;z-index:30;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at center,#2e0d1a,#09040a);
+  opacity:0;pointer-events:none;
+  transition:opacity .5s ease;
+}
+#velo.show{opacity:1;pointer-events:all}
+.velo-txt{
+  font-family:"Dancing Script",cursive;
+  font-size:clamp(1.8rem,8vw,3rem);
+  color:#e5c97e;text-align:center;line-height:1.5;
+  text-shadow:0 0 28px rgba(229,201,126,.4);
+  animation:pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(.97)}}
+
+/* ====== CARTA ====== */
+#carta{
+  position:relative;z-index:5;
+  min-height:100vh;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:4rem 1.2rem 5rem;
+  opacity:0;
+  transition:opacity 1.2s ease;
+}
+#carta.show{opacity:1}
+
+.papel{
+  width:100%;max-width:540px;
+  background:linear-gradient(145deg,rgba(34,13,22,.97),rgba(22,8,14,.99));
+  border:1px solid rgba(201,168,76,.22);
+  border-radius:3px;
+  padding:clamp(1.8rem,6vw,3rem) clamp(1.4rem,5vw,2.6rem);
+  box-shadow:0 0 0 1px rgba(201,168,76,.07),inset 0 2px 0 rgba(201,168,76,.12),0 40px 100px rgba(0,0,0,.75);
+  position:relative;
+}
+.papel::before{
+  content:'\2764';
+  position:absolute;top:-1rem;left:50%;transform:translateX(-50%);
+  font-size:2rem;color:#a33e54;
+  filter:drop-shadow(0 0 8px rgba(163,62,84,.7));
+}
+
+.carta-fecha{
+  font-family:Lato,sans-serif;font-size:.6rem;
+  letter-spacing:3px;text-transform:uppercase;
+  color:#c9a84c;opacity:.7;margin-bottom:1.6rem;
+}
+.carta-para{
+  font-family:"Dancing Script",cursive;
+  font-size:clamp(1.6rem,6vw,2.3rem);
+  color:#e5c97e;margin-bottom:1.4rem;line-height:1.2;
+  min-height:2.5rem;
+}
+.carta-cuerpo{
+  font-size:clamp(1.05rem,3.8vw,1.18rem);
+  line-height:2;color:#ede0e4;
+  white-space:pre-wrap;padding-left:.4rem;
+  min-height:3rem;
+}
+.cursor-tip{
+  display:inline-block;width:2px;height:1em;
+  background:#e88fa0;
+  animation:blink .75s step-end infinite;
+  vertical-align:text-bottom;margin-left:2px;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+.carta-firma-wrap{
+  margin-top:2rem;padding-top:1.2rem;
+  border-top:1px solid rgba(201,168,76,.1);
+  display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;
+}
+.carta-firma{
+  font-family:"Dancing Script",cursive;
+  font-size:clamp(1.4rem,5vw,1.9rem);
+  color:#e88fa0;opacity:0;transition:opacity 1.4s ease .3s;
+}
+.carta-firma.show{opacity:1}
+.carta-sub{
+  font-family:Lato,sans-serif;font-size:.55rem;
+  letter-spacing:4px;text-transform:uppercase;
+  color:#c9a84c;opacity:0;transition:opacity 1.2s ease .8s;
+}
+.carta-sub.show{opacity:.6}
+
+.pie{
+  margin-top:2.5rem;opacity:0;
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+  text-align:center;transition:opacity 1.4s ease 1s;
+}
+.pie.show{opacity:1}
+.pie-orn{font-size:1rem;color:#c9a84c;letter-spacing:8px;opacity:.5}
+.pie-txt{font-style:italic;font-size:.9rem;color:#c8a0b0;line-height:1.6}
+
+/* ====== MÚSICA ====== */
+#btn-musica{
+  position:fixed;bottom:1.4rem;right:1.4rem;z-index:99;
+  width:46px;height:46px;border-radius:50%;
+  background:rgba(22,8,14,.9);
+  border:1px solid rgba(201,168,76,.3);
+  font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+  transition:transform .3s ease,border-color .3s ease;
+  backdrop-filter:blur(12px);
+}
+#btn-musica:hover{transform:scale(1.12);border-color:#c9a84c}
+#btn-musica.on{border-color:#c9a84c;animation:mpulse 1.5s ease-in-out infinite}
+@keyframes mpulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}50%{box-shadow:0 0 0 10px rgba(201,168,76,0)}}
+
+/* ====== MENSAJES FLOTANTES ====== */
+.flotante{
+  position:fixed;pointer-events:none;z-index:9999;
+  font-family:"Dancing Script",cursive;font-size:1rem;
+  color:#f2c4ce;text-shadow:0 0 8px rgba(232,143,160,.5);
+  opacity:0;white-space:nowrap;
+  transition:opacity .25s ease,transform .7s ease;
+}
 </style>
 </head>
 <body>
+
 <canvas id="bg"></canvas>
 
+<!-- ===== SPLASH ===== -->
 <div id="splash">
-  <div class="si">
-    <div class="glyph">&#10022; &#10022; &#10022;</div>
-    <p class="kicker">Solo para ti</p>
-    <h1 class="sname">Una carta<br/><em>para mi Tessie</em></h1>
-    <div class="hb">&#10084;</div>
-    <p class="hint">Escrita desde lo m&aacute;s profundo<br/>de mi coraz&oacute;n, para la persona<br/>m&aacute;s bo&ntilde;ita de mi vida.</p>
-    <button class="btn" id="ob"><span>Abrir mi carta &#128140;</span></button>
+  <div class="splash-box">
+    <div class="s-glyph">&#10022; &#10022; &#10022;</div>
+    <p class="s-tag">Solo para ti</p>
+    <h1 class="s-title">Una carta<br/><span>para mi Tessie</span></h1>
+    <div class="s-heart">&#10084;</div>
+    <p class="s-sub">Escrita desde lo m&aacute;s profundo<br/>de mi coraz&oacute;n, para la persona<br/>m&aacute;s bo&ntilde;ita de mi vida.</p>
+    <button id="btn-abrir"><span class="btxt">Abrir mi carta &#128140;</span></button>
   </div>
 </div>
 
-<div id="veil">
-  <div class="vt">Con todo mi amor<br/>para ti, mi Tessie &#10084;</div>
+<!-- ===== VELO ===== -->
+<div id="velo">
+  <p class="velo-txt">Con todo mi amor<br/>para ti, mi Tessie &#10084;</p>
 </div>
 
-<button id="mb">&#127925;</button>
-
-<div id="lw">
-  <div class="paper">
-    <div class="ldate" id="ld"></div>
-    <div class="lto" id="lt"></div>
-    <div class="lbody" id="lb"><span class="cur"></span></div>
-    <div class="lbot">
-      <div class="lsig" id="ls">Con todo mi amor &#127801;</div>
-      <div class="lsl" id="ll">Tuyo, siempre &#10022;</div>
+<!-- ===== CARTA ===== -->
+<div id="carta">
+  <div class="papel">
+    <div class="carta-fecha" id="el-fecha"></div>
+    <div class="carta-para"  id="el-para"></div>
+    <div class="carta-cuerpo" id="el-cuerpo"><span class="cursor-tip" id="el-cursor"></span></div>
+    <div class="carta-firma-wrap">
+      <div class="carta-firma" id="el-firma">Con todo mi amor &#127801;</div>
+      <div class="carta-sub"   id="el-sub">Tuyo, siempre &#10022;</div>
     </div>
   </div>
-  <div class="foot" id="ft">
-    <div class="fo">&#10022; &#10022; &#10022;</div>
-    <p class="ftext">Hecha con amor, exclusivamente<br/>para mi ni&ntilde;ita peshosha. &#128149;</p>
+  <div class="pie" id="el-pie">
+    <div class="pie-orn">&#10022; &#10022; &#10022;</div>
+    <p class="pie-txt">Hecha con amor, exclusivamente<br/>para mi ni&ntilde;ita peshosha &#128149;</p>
   </div>
 </div>
 
+<!-- ===== MÚSICA ===== -->
+<button id="btn-musica">&#127925;</button>
+
 <script>
-var GREETING = "Mi Tessie hermosha,";
-var LETTER   = "Hoy, en tu cumpleaños, solo pienso en lo afortunado que soy de tenerte en mi vida.\n\nMi Tessie... no sé si alguna vez te lo he dicho con suficientes palabras, pero tú eres de esas personas que llegan y sin pedir permiso te cambian todo. De las que hacen que hasta el día más aburrido se vuelva especial.\n\nEres tan boñita cuando sonríes. Tan peshosha cuando estás siendo tonta. Tan hermosha en cada versión tuya que me has regalado ver.\n\nMi niñita, hay algo en ti que no encuentro en ningún otro lado. Esa forma de ser, esa risa, esa manera en la que dices las cosas... todo eso me tiene completamente enamorado de ti.\n\nNo vengo aquí a prometerte el mundo, porque ya lo tienes. Solo quiero que sepas que en este momento, en este día que es tuyo, yo estoy aquí pensando en ti con una sonrisa que no puedo esconder.\n\nFeliz cumpleaños, mi Tessie. Mi hermosha. Mi niñita boñita.\n\nQue este año te traiga todo lo que mereces, que es muchísimo.\n\nTe quiero.";
-var SECRET   = ["Mi Tessie ❤","Boñita peshosha ✨","Te quiero mucho 💙","Mi niñita 🌹","Hermosha ✨","Solo tú ♥"];
+/* ================================================
+   TESSIE BIRTHDAY — JS limpio, sin template bugs
+   ================================================ */
 
-// ── CANVAS PARTICLES ──────────────────────────
-var bc = document.getElementById("bg");
-var bx = bc.getContext("2d");
-var pts = [], orbT = 0;
-function rz(){ bc.width = innerWidth; bc.height = innerHeight; }
-function dh(c,x,y,s){ c.beginPath(); c.moveTo(x,y+s*.3); c.bezierCurveTo(x,y,x-s,y,x-s,y+s*.5); c.bezierCurveTo(x-s,y+s,x,y+s*1.3,x,y+s*1.5); c.bezierCurveTo(x,y+s*1.3,x+s,y+s,x+s,y+s*.5); c.bezierCurveTo(x+s,y,x,y,x,y+s*.3); c.closePath(); c.fill(); }
-function mkPt(){ return { x:Math.random()*bc.width, y:Math.random()*bc.height, s:Math.random()*1.8+.4, sp:Math.random()*.35+.08, dr:(Math.random()-.5)*.25, tw:Math.random()*Math.PI*2, heart:Math.random()<.2 }; }
-function tickPt(p){ p.y-=p.sp; p.x+=p.dr; p.tw+=.04; if(p.y<-15){ p.x=Math.random()*bc.width; p.y=bc.height+10; } }
-function drawPt(p){ var a=Math.max(0,Math.sin(p.tw)*.3+.45); bx.save(); bx.globalAlpha=a; if(p.heart){ bx.fillStyle="#e88fa0"; dh(bx,p.x,p.y,p.s*2); } else { bx.fillStyle="#e5c97e"; bx.beginPath(); bx.arc(p.x,p.y,p.s,0,Math.PI*2); bx.fill(); } bx.restore(); }
-var ORBS = [{x:.5,y:.3,r:200,h:340},{x:.15,y:.7,r:150,h:45},{x:.85,y:.6,r:130,h:330}];
-function bf(){ bx.clearRect(0,0,bc.width,bc.height); orbT+=.008; ORBS.forEach(function(o,i){ var cx=(o.x+Math.sin(orbT+i)*.06)*bc.width, cy=(o.y+Math.cos(orbT+i*1.3)*.05)*bc.height, g=bx.createRadialGradient(cx,cy,0,cx,cy,o.r); g.addColorStop(0,"hsla("+o.h+",70%,50%,.07)"); g.addColorStop(1,"transparent"); bx.fillStyle=g; bx.beginPath(); bx.arc(cx,cy,o.r,0,Math.PI*2); bx.fill(); }); pts.forEach(function(p){ tickPt(p); drawPt(p); }); requestAnimationFrame(bf); }
-rz(); for(var i=0;i<55;i++) pts.push(mkPt()); bf();
-window.addEventListener("resize", rz);
+// ---------- TEXTOS ----------
+var SALUDO = "Mi Tessie hermosha,";
 
-// ── OPEN BUTTON ───────────────────────────────
-document.getElementById("ob").addEventListener("click", function(){
-  var veil = document.getElementById("veil");
-  veil.classList.add("on");
-  setTimeout(function(){
-    document.getElementById("splash").classList.add("out");
-    setTimeout(function(){
-      veil.classList.remove("on");
-      var lw = document.getElementById("lw");
-      lw.style.display = "flex";
-      setTimeout(function(){
-        lw.classList.add("on");
-        // Date
-        var d = new Date();
-        document.getElementById("ld").textContent = d.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
-        // Typewriter greeting
-        var lt = document.getElementById("lt"), gi = 0;
-        function tg(){
-          if(gi < GREETING.length){ lt.textContent += GREETING[gi++]; setTimeout(tg, 55+Math.random()*25); }
-          else { setTimeout(tl, 350); }
-        }
-        // Typewriter letter
-        function tl(){
-          var lb = document.getElementById("lb"), cur = lb.querySelector(".cur"), li = 0;
-          function tt(){
-            if(li < LETTER.length){
-              var ch = LETTER[li++];
-              cur.insertAdjacentText("beforebegin", ch);
-              var dl = (ch==="
-") ? 280 : (ch==="."||ch==="!"||ch==="?") ? 180 : (ch===",") ? 100 : 30+Math.random()*14;
-              setTimeout(tt, dl);
-            } else {
-              cur.remove();
-              document.getElementById("ls").classList.add("on");
-              document.getElementById("ll").classList.add("on");
-              setTimeout(function(){ document.getElementById("ft").classList.add("on"); }, 600);
-            }
-          }
-          tt();
-        }
-        tg();
-      }, 80);
-    }, 1900);
-  }, 450);
+var PARRAFOS = [
+  "Hoy, en tu cumplea\u00f1os, solo pienso en lo afortunado que soy de tenerte en mi vida.",
+  "Mi Tessie... no s\u00e9 si alguna vez te lo he dicho con suficientes palabras, pero t\u00fa eres de esas personas que llegan y sin pedir permiso te cambian todo. De las que hacen que hasta el d\u00eda m\u00e1s aburrido se vuelva especial.",
+  "Eres tan bo\u00f1ita cuando sonr\u00edes. Tan peshosha cuando est\u00e1s siendo tonta. Tan hermosha en cada versi\u00f3n tuya que me has regalado ver.",
+  "Mi ni\u00f1ita, hay algo en ti que no encuentro en ning\u00fan otro lado. Esa forma de ser, esa risa, esa manera en la que dices las cosas... todo eso me tiene completamente enamorado de ti.",
+  "No vengo aqu\u00ed a prometerte el mundo, porque ya lo tienes. Solo quiero que sepas que en este momento, en este d\u00eda que es tuyo, yo estoy aqu\u00ed pensando en ti con una sonrisa que no puedo esconder.",
+  "Feliz cumplea\u00f1os, mi Tessie. Mi hermosha. Mi ni\u00f1ita bo\u00f1ita.",
+  "Que este a\u00f1o te traiga todo lo que mereces, que es much\u00edsimo.",
+  "Te quiero."
+];
+
+// Unir párrafos con doble salto de línea
+var TEXTO = PARRAFOS.join("\n\n");
+
+var SECRETOS = [
+  "Mi Tessie \u2764",
+  "Bo\u00f1ita peshosha \u2728",
+  "Te quiero mucho \uD83D\uDC99",
+  "Mi ni\u00f1ita \uD83C\uDF39",
+  "Hermosha \u2728",
+  "Solo t\u00fa \u2665"
+];
+
+// ---------- CANVAS PARTÍCULAS ----------
+var canvas = document.getElementById("bg");
+var ctx    = canvas.getContext("2d");
+var pts    = [];
+var orbT   = 0;
+
+function resizeCanvas() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function dibujarCorazon(c, x, y, s) {
+  c.beginPath();
+  c.moveTo(x, y + s * 0.3);
+  c.bezierCurveTo(x, y, x - s, y, x - s, y + s * 0.5);
+  c.bezierCurveTo(x - s, y + s, x, y + s * 1.3, x, y + s * 1.5);
+  c.bezierCurveTo(x, y + s * 1.3, x + s, y + s, x + s, y + s * 0.5);
+  c.bezierCurveTo(x + s, y, x, y, x, y + s * 0.3);
+  c.closePath();
+  c.fill();
+}
+
+function nuevaPt() {
+  return {
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    s: Math.random() * 1.8 + 0.4,
+    sp: Math.random() * 0.35 + 0.08,
+    dr: (Math.random() - 0.5) * 0.25,
+    tw: Math.random() * Math.PI * 2,
+    corazon: Math.random() < 0.2
+  };
+}
+
+function tickPt(p) {
+  p.y  -= p.sp;
+  p.x  += p.dr;
+  p.tw += 0.04;
+  if (p.y < -15) {
+    p.x = Math.random() * canvas.width;
+    p.y = canvas.height + 10;
+  }
+}
+
+function drawPt(p) {
+  var alpha = Math.max(0, Math.sin(p.tw) * 0.3 + 0.45);
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (p.corazon) {
+    ctx.fillStyle = "#e88fa0";
+    dibujarCorazon(ctx, p.x, p.y, p.s * 2);
+  } else {
+    ctx.fillStyle = "#e5c97e";
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.s, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+var ORBS = [
+  { x: 0.5,  y: 0.3, r: 200, h: 340 },
+  { x: 0.15, y: 0.7, r: 150, h: 45  },
+  { x: 0.85, y: 0.6, r: 130, h: 330 }
+];
+
+function frame() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  orbT += 0.008;
+
+  // orbes suaves
+  ORBS.forEach(function(o, i) {
+    var cx = (o.x + Math.sin(orbT + i) * 0.06) * canvas.width;
+    var cy = (o.y + Math.cos(orbT + i * 1.3) * 0.05) * canvas.height;
+    var g  = ctx.createRadialGradient(cx, cy, 0, cx, cy, o.r);
+    g.addColorStop(0, "hsla(" + o.h + ",70%,50%,.07)");
+    g.addColorStop(1, "transparent");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(cx, cy, o.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  pts.forEach(function(p) { tickPt(p); drawPt(p); });
+  requestAnimationFrame(frame);
+}
+
+resizeCanvas();
+for (var i = 0; i < 55; i++) pts.push(nuevaPt());
+frame();
+window.addEventListener("resize", resizeCanvas);
+
+// ---------- BOTÓN ABRIR ----------
+document.getElementById("btn-abrir").addEventListener("click", function() {
+  var velo  = document.getElementById("velo");
+  var carta = document.getElementById("carta");
+
+  // 1. Mostrar velo
+  velo.classList.add("show");
+
+  setTimeout(function() {
+    // 2. Ocultar splash
+    document.getElementById("splash").classList.add("hide");
+
+    setTimeout(function() {
+      // 3. Quitar velo, mostrar carta
+      velo.classList.remove("show");
+      carta.style.display = "flex";
+
+      setTimeout(function() {
+        carta.classList.add("show");
+
+        // Poner fecha
+        var ahora = new Date();
+        document.getElementById("el-fecha").textContent =
+          ahora.toLocaleDateString("es-ES", {
+            weekday: "long", day: "numeric", month: "long", year: "numeric"
+          });
+
+        // Arrancar escritura saludo
+        escribir(document.getElementById("el-para"), SALUDO, 60, function() {
+          setTimeout(function() {
+            escribirCarta();
+          }, 400);
+        });
+
+      }, 100);
+    }, 1800);
+  }, 400);
 });
 
-// ── MUSIC ─────────────────────────────────────
-var MB = document.getElementById("mb"), AC=null, GN=null, mOn=false, mT=null, mI=0;
-var MEL=[[523.25,.5],[659.25,.25],[587.33,.25],[523.25,.5],[440,.5],[392,.25],[440,.25],[523.25,.75],[493.88,.5],[440,.5],[523.25,.25],[587.33,.25],[659.25,.5],[523.25,.5],[440,1],[392,.5],[440,.25],[493.88,.25],[523.25,1]];
-function pN(f,d){ var o=AC.createOscillator(),e=AC.createGain(); o.type="triangle"; o.frequency.value=f; e.gain.setValueAtTime(0,AC.currentTime); e.gain.linearRampToValueAtTime(.10,AC.currentTime+.06); e.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d); o.connect(e); e.connect(GN); o.start(); o.stop(AC.currentTime+d); }
-function pm(){ if(!mOn)return; var n=MEL[mI%MEL.length]; pN(n[0],n[1]*.88); mI++; mT=setTimeout(pm,n[1]*860); }
-MB.addEventListener("click", function(){
-  if(!AC){ AC=new(window.AudioContext||window.webkitAudioContext)(); GN=AC.createGain(); GN.gain.value=.55; GN.connect(AC.destination); }
-  if(!mOn){ mOn=true; MB.classList.add("on"); MB.textContent="♫"; pm(); }
-  else { mOn=false; clearTimeout(mT); MB.classList.remove("on"); MB.textContent="🎵"; }
+// ---------- TYPEWRITER ----------
+function escribir(el, texto, vel, callback) {
+  var i = 0;
+  function paso() {
+    if (i < texto.length) {
+      el.textContent += texto[i];
+      i++;
+      setTimeout(paso, vel + Math.random() * 20);
+    } else if (callback) {
+      callback();
+    }
+  }
+  paso();
+}
+
+function escribirCarta() {
+  var cuerpo = document.getElementById("el-cuerpo");
+  var cursor = document.getElementById("el-cursor");
+  var i = 0;
+
+  function paso() {
+    if (i < TEXTO.length) {
+      var ch = TEXTO[i];
+      i++;
+      cursor.insertAdjacentText("beforebegin", ch);
+
+      var delay;
+      if      (ch === "\n") delay = 320;
+      else if (ch === "."  || ch === "!" || ch === "?") delay = 190;
+      else if (ch === ",") delay = 100;
+      else                  delay = 28 + Math.random() * 14;
+
+      setTimeout(paso, delay);
+    } else {
+      // Fin — mostrar firma y pie
+      cursor.remove();
+      document.getElementById("el-firma").classList.add("show");
+      document.getElementById("el-sub").classList.add("show");
+      setTimeout(function() {
+        document.getElementById("el-pie").classList.add("show");
+      }, 700);
+    }
+  }
+
+  paso();
+}
+
+// ---------- MÚSICA ----------
+var audioCtx = null, gainNode = null, mOn = false, mTimer = null, mIdx = 0;
+var MELODIA = [
+  [523.25, 0.5], [659.25, 0.25], [587.33, 0.25],
+  [523.25, 0.5], [440,    0.5 ],
+  [392,    0.25], [440,   0.25], [523.25, 0.75],
+  [493.88, 0.5], [440,    0.5 ],
+  [523.25, 0.25], [587.33, 0.25], [659.25, 0.5], [523.25, 0.5],
+  [440,    1.0 ],
+  [392,    0.5 ], [440,   0.25], [493.88, 0.25],
+  [523.25, 1.0 ]
+];
+
+function tocarNota(freq, dur) {
+  var osc = audioCtx.createOscillator();
+  var env = audioCtx.createGain();
+  osc.type = "triangle";
+  osc.frequency.value = freq;
+  env.gain.setValueAtTime(0, audioCtx.currentTime);
+  env.gain.linearRampToValueAtTime(0.10, audioCtx.currentTime + 0.06);
+  env.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+  osc.connect(env);
+  env.connect(gainNode);
+  osc.start();
+  osc.stop(audioCtx.currentTime + dur);
+}
+
+function tocarMelodia() {
+  if (!mOn) return;
+  var nota = MELODIA[mIdx % MELODIA.length];
+  tocarNota(nota[0], nota[1] * 0.88);
+  mIdx++;
+  mTimer = setTimeout(tocarMelodia, nota[1] * 860);
+}
+
+document.getElementById("btn-musica").addEventListener("click", function() {
+  var btn = document.getElementById("btn-musica");
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.55;
+    gainNode.connect(audioCtx.destination);
+  }
+  if (!mOn) {
+    mOn = true;
+    btn.classList.add("on");
+    btn.textContent = "\u266B";
+    tocarMelodia();
+  } else {
+    mOn = false;
+    clearTimeout(mTimer);
+    btn.classList.remove("on");
+    btn.textContent = "\uD83C\uDFB5";
+  }
 });
 
-// ── SECRET FLOAT MESSAGES ─────────────────────
-document.addEventListener("click", function(e){
-  if(e.target.closest("button")) return;
+// ---------- MENSAJES SECRETOS ----------
+document.addEventListener("click", function(e) {
+  if (e.target.closest("button")) return;
   var m = document.createElement("div");
-  m.className = "fm";
-  m.textContent = SECRET[Math.floor(Math.random()*SECRET.length)];
-  m.style.left = (e.clientX-40)+"px";
-  m.style.top  = (e.clientY-16)+"px";
+  m.className = "flotante";
+  m.textContent = SECRETOS[Math.floor(Math.random() * SECRETOS.length)];
+  m.style.left = (e.clientX - 40) + "px";
+  m.style.top  = (e.clientY - 16) + "px";
   document.body.appendChild(m);
-  requestAnimationFrame(function(){
-    m.style.opacity="1"; m.style.transform="translateY(-28px)";
-    setTimeout(function(){ m.style.opacity="0"; m.style.transform="translateY(-55px)"; setTimeout(function(){ m.remove(); },700); }, 1100);
+  requestAnimationFrame(function() {
+    m.style.opacity   = "1";
+    m.style.transform = "translateY(-28px)";
+    setTimeout(function() {
+      m.style.opacity   = "0";
+      m.style.transform = "translateY(-55px)";
+      setTimeout(function() { m.remove(); }, 700);
+    }, 1100);
   });
 });
 
-// ── SCROLL PARALLAX ───────────────────────────
-var lsy=0;
-window.addEventListener("scroll", function(){ var sy=scrollY,dy=sy-lsy; pts.forEach(function(p){ p.y-=dy*.04; }); lsy=sy; },{passive:true});
+// ---------- PARALLAX ----------
+var scrollY_last = 0;
+window.addEventListener("scroll", function() {
+  var sy = window.scrollY;
+  var dy = sy - scrollY_last;
+  pts.forEach(function(p) { p.y -= dy * 0.04; });
+  scrollY_last = sy;
+}, { passive: true });
 </script>
 </body>
 </html>
