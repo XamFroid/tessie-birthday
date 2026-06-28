@@ -195,8 +195,6 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:0}
 <!-- ===== SPLASH ===== -->
 <div id="splash">
   <div class="splash-box">
-    <div class="s-glyph">&#10022; &#10022; &#10022;</div>
-    <p class="s-tag">Solo para ti</p>
     <h1 class="s-title">Una carta<br/><span>para mi Tessie</span></h1>
     <div class="s-heart">&#10084;</div>
     <p class="s-sub">Escrita desde lo m&aacute;s profundo<br/>de mi coraz&oacute;n, para la persona<br/>m&aacute;s bo&ntilde;ita de mi vida.</p>
@@ -220,13 +218,12 @@ canvas#bg{position:fixed;inset:0;pointer-events:none;z-index:0}
       <div class="carta-sub"   id="el-sub">Tuyo, siempre &#10022;</div>
     </div>
   </div>
-  <div class="pie" id="el-pie">
-    <div class="pie-orn">&#10022; &#10022; &#10022;</div>
-    <p class="pie-txt">Hecha con amor, exclusivamente<br/>para mi ni&ntilde;ita peshosha &#128149;</p>
-  </div>
 </div>
 
-<!-- ===== MÚSICA ===== -->
+<!-- ===== YOUTUBE AUDIO ===== -->
+<div id="yt-wrap" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;">
+  <div id="yt-player"></div>
+</div>
 <button id="btn-musica">&#127925;</button>
 
 <script>
@@ -357,6 +354,9 @@ document.getElementById("btn-abrir").addEventListener("click", function() {
   var velo  = document.getElementById("velo");
   var carta = document.getElementById("carta");
 
+  // Arrancar música (necesita gesto del usuario)
+  intentarReproducir();
+
   // 1. Mostrar velo
   velo.classList.add("show");
 
@@ -430,7 +430,6 @@ function escribirCarta() {
       document.getElementById("el-firma").classList.add("show");
       document.getElementById("el-sub").classList.add("show");
       setTimeout(function() {
-        document.getElementById("el-pie").classList.add("show");
       }, 700);
     }
   }
@@ -438,59 +437,64 @@ function escribirCarta() {
   paso();
 }
 
-// ---------- MÚSICA ----------
-var audioCtx = null, gainNode = null, mOn = false, mTimer = null, mIdx = 0;
-var MELODIA = [
-  [523.25, 0.5], [659.25, 0.25], [587.33, 0.25],
-  [523.25, 0.5], [440,    0.5 ],
-  [392,    0.25], [440,   0.25], [523.25, 0.75],
-  [493.88, 0.5], [440,    0.5 ],
-  [523.25, 0.25], [587.33, 0.25], [659.25, 0.5], [523.25, 0.5],
-  [440,    1.0 ],
-  [392,    0.5 ], [440,   0.25], [493.88, 0.25],
-  [523.25, 1.0 ]
-];
+// ---------- YOUTUBE MÚSICA ----------
+var ytPlayer = null;
+var ytReady  = false;
+var ytMuted  = false;
 
-function tocarNota(freq, dur) {
-  var osc = audioCtx.createOscillator();
-  var env = audioCtx.createGain();
-  osc.type = "triangle";
-  osc.frequency.value = freq;
-  env.gain.setValueAtTime(0, audioCtx.currentTime);
-  env.gain.linearRampToValueAtTime(0.10, audioCtx.currentTime + 0.06);
-  env.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-  osc.connect(env);
-  env.connect(gainNode);
-  osc.start();
-  osc.stop(audioCtx.currentTime + dur);
-}
+// Cargar la API de YouTube
+var ytScript = document.createElement("script");
+ytScript.src = "https://www.youtube.com/iframe_api";
+document.head.appendChild(ytScript);
 
-function tocarMelodia() {
-  if (!mOn) return;
-  var nota = MELODIA[mIdx % MELODIA.length];
-  tocarNota(nota[0], nota[1] * 0.88);
-  mIdx++;
-  mTimer = setTimeout(tocarMelodia, nota[1] * 860);
+// Callback global que YouTube llama cuando la API está lista
+window.onYouTubeIframeAPIReady = function() {
+  ytPlayer = new YT.Player("yt-player", {
+    videoId: "t1dvrcqlQgI",
+    playerVars: {
+      autoplay: 1,
+      loop: 1,
+      playlist: "t1dvrcqlQgI",
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1
+    },
+    events: {
+      onReady: function(e) {
+        ytReady = true;
+        e.target.setVolume(60);
+        // Intentar reproducir automáticamente
+        e.target.playVideo();
+        document.getElementById("btn-musica").classList.add("on");
+        document.getElementById("btn-musica").textContent = "\u266B";
+      }
+    }
+  });
+};
+
+// También intentamos reproducir cuando el usuario presiona el botón abrir
+function intentarReproducir() {
+  if (ytReady && ytPlayer) {
+    ytPlayer.playVideo();
+    document.getElementById("btn-musica").classList.add("on");
+    document.getElementById("btn-musica").textContent = "\u266B";
+  }
 }
 
 document.getElementById("btn-musica").addEventListener("click", function() {
   var btn = document.getElementById("btn-musica");
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.55;
-    gainNode.connect(audioCtx.destination);
-  }
-  if (!mOn) {
-    mOn = true;
-    btn.classList.add("on");
-    btn.textContent = "\u266B";
-    tocarMelodia();
-  } else {
-    mOn = false;
-    clearTimeout(mTimer);
+  if (!ytReady || !ytPlayer) return;
+  if (!ytMuted) {
+    ytPlayer.pauseVideo();
+    ytMuted = true;
     btn.classList.remove("on");
     btn.textContent = "\uD83C\uDFB5";
+  } else {
+    ytPlayer.playVideo();
+    ytMuted = false;
+    btn.classList.add("on");
+    btn.textContent = "\u266B";
   }
 });
 
